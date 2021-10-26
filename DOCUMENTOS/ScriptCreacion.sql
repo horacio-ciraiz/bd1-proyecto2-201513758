@@ -1,0 +1,107 @@
+-- Table  Eleccion 
+
+DROP TABLE IF EXISTS Eleccion;
+
+CREATE TABLE IF NOT EXISTS Eleccion (
+   ID_Eleccion  INT NOT NULL AUTO_INCREMENT,
+   Nombre  VARCHAR(100) NOT NULL,
+   Anio  INT NOT NULL,
+  PRIMARY KEY ( ID_Eleccion )
+);
+
+
+-- Table    Sexo 
+
+DROP TABLE IF EXISTS Sexo  ;
+
+CREATE TABLE IF NOT EXISTS Sexo  (
+   ID_Sexo  INT NOT NULL AUTO_INCREMENT,
+   Nombre  VARCHAR(45) NOT NULL,
+  PRIMARY KEY ( ID_Sexo )  
+);
+
+
+
+-- Table    Raza 
+
+DROP TABLE IF EXISTS Raza  ;
+
+CREATE TABLE IF NOT EXISTS    Raza  (
+   ID_Raza  INT NOT NULL AUTO_INCREMENT,
+   Nombre  VARCHAR(45) NOT NULL,
+  PRIMARY KEY ( ID_Raza )
+);
+
+
+
+-- Table    Tipo 
+
+DROP TABLE IF EXISTS  Tipo;
+
+CREATE TABLE IF NOT EXISTS Tipo (
+   ID_Tipo  INT NOT NULL AUTO_INCREMENT,
+   Nombre  VARCHAR(45) NOT NULL,
+  PRIMARY KEY ( ID_Tipo )
+  );
+
+-- Table    Partido 
+
+DROP TABLE IF EXISTS Partido  ;
+
+CREATE TABLE IF NOT EXISTS Partido (
+   ID_Partido  INT NOT NULL AUTO_INCREMENT,
+   Nombre  VARCHAR(100) NOT NULL,
+   Iniciales  VARCHAR(45) NOT NULL,
+  PRIMARY KEY ( ID_Partido )
+  );
+
+
+
+-- Table    Zona 
+
+DROP TABLE IF EXISTS Zona;
+
+CREATE TABLE IF NOT EXISTS Zona (
+    ID_Zona  INT NOT NULL AUTO_INCREMENT,
+    Nombre  VARCHAR(100) NOT NULL,
+    ID_Tipo  INT NOT NULL,
+    ID_Superior  INT NULL,
+    PRIMARY KEY (ID_Zona),
+    CONSTRAINT fk_Zona_Tipo FOREIGN KEY (ID_Tipo) REFERENCES Tipo (ID_Tipo) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_Zona_ZonaSuperior FOREIGN KEY (ID_Superior) REFERENCES Zona (ID_Zona) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+-- Table    Estadistica 
+
+DROP TABLE IF EXISTS Estadistica ;
+
+CREATE TABLE IF NOT EXISTS Estadistica(
+    ID_Eleccion INT NOT NULL,
+    ID_Zona INT NOT NULL,
+    ID_Partido INT NOT NULL,
+    ID_Sexo INT NOT NULL,
+    ID_Raza INT NOT NULL,
+    Analfabeta INT NOT NULL,
+    Alfabeta INT NOT NULL,
+    Primaria VARCHAR(45) NOT NULL,
+    Medio VARCHAR(45) NOT NULL,
+    Universitario VARCHAR(45) NOT NULL,
+    PRIMARY KEY (ID_Eleccion, ID_Zona, ID_Partido, ID_Sexo, ID_Raza),
+    CONSTRAINT fk_Estadistica_Sexo FOREIGN KEY (ID_Sexo) REFERENCES Sexo (ID_Sexo) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_Estadistica_Raza FOREIGN KEY (ID_Raza) REFERENCES Raza (ID_Raza) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_Estadistica_Partido FOREIGN KEY (ID_Partido) REFERENCES Partido (ID_Partido) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_Estadistica_Eleccion FOREIGN KEY (ID_Eleccion) REFERENCES Eleccion (ID_Eleccion) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_Estadistica_Zona FOREIGN KEY (ID_Zona) REFERENCES Zona (ID_Zona) ON DELETE CASCADE ON UPDATE CASCADE
+  );
+
+
+
+
+
+
+
+
+
+
+
