@@ -53,62 +53,6 @@ ON  Total.Pais_Eleccion=Parcial.Pais_Eleccion
 ) conAlcaldia
 ON sinAlcaldia.Pais_Eleccion = conAlcaldia.Pais_Eleccion and sinAlcaldia.Porcentaje = conAlcaldia.Porcentaje
 
--- Copia
-
-Select VotosParciales.Nombre,VotosParciales.Anio,VotosParciales.Pais,(TotalSumados/TotalSuma)*100 as Porcentaje from (
-	Select Pais_Eleccion,Max(Total) as TotalSumados from (
-		Select e2.Nombre as Nombre_Eleccion,e2.Anio as Anio,Pais.Nombre as Pais_Eleccion,p.Nombre as Part ,sum(e.Analfabeta+e.Alfabeta) as Total from Estadistica e
-		inner join Eleccion e2 on e2.ID_Eleccion =e.ID_Eleccion 
-		inner join Zona Muni ON Muni.ID_Zona = e.ID_Zona
-		inner join Zona Dep ON Dep.ID_Zona = Muni.ID_Superior 
-		inner join Zona Reg ON Reg.ID_Zona = Dep.ID_Superior 
-		inner join Zona Pais on Pais.ID_Zona = Reg.ID_Superior 
-		inner join Partido p ON p.ID_Partido = e.ID_Partido 
-		Group by Pais.Nombre,p.Nombre ,e2.Nombre,e2.Anio
-		) as VotosTotales
-	Group by Pais_Eleccion
-	)as Votos
-inner join (
-		Select e2.Nombre as Nombre,e2.Anio as Anio,Pais.Nombre as Pais,sum(e.Analfabeta + e.Alfabeta ) as TotalSuma from Estadistica e 
-		inner join Zona Muni ON Muni.ID_Zona = e.ID_Zona
-		inner join Eleccion e2 ON e2.ID_Eleccion = e.ID_Eleccion 
-		inner join Zona Dep ON Dep.ID_Zona = Muni.ID_Superior 
-		inner join Zona Reg ON Reg.ID_Zona = Dep.ID_Superior 
-		inner join Zona Pais on Pais.ID_Zona = Reg.ID_Superior 
-		inner join Partido p2 on p2.ID_Partido = e.ID_Partido 
-		group by Pais.Nombre,e2.Nombre,e2.Anio
-	) VotosParciales
-ON VotosParciales.Pais = Votos.Pais_Eleccion
-----Consulta 1 Version 3
-
--- -----------------------------
-
-Select VotosTotales.Nombre_Eleccion,VotosTotales.Anio,VotosTotales.Pais_Eleccion,(VotosTotales.MaxTotal/VotosParciales.TotalSuma)*100 as Porcentaje from 
-(
-	Select DISTINCT Votos.Nombre_Eleccion as Nombre_Eleccion ,Votos.Anio as Anio,Votos.Pais_Eleccion as Pais_Eleccion,Votos.Part as Part, Max(Total) as MaxTotal from 
-	(
-		Select Pais.Nombre as Pais_Eleccion,e2.Nombre as Nombre_Eleccion,e2.Anio as Anio,p.Nombre as Part ,sum(e.Analfabeta+e.Alfabeta) as Total from Estadistica e
-		inner join Eleccion e2 on e2.ID_Eleccion =e.ID_Eleccion 
-		inner join Partido p ON p.ID_Partido = e.ID_Partido 
-		inner join Zona Muni ON Muni.ID_Zona = e.ID_Zona
-		inner join Zona Dep ON Dep.ID_Zona = Muni.ID_Superior 
-		inner join Zona Reg ON Reg.ID_Zona = Dep.ID_Superior 
-		inner join Zona Pais on Pais.ID_Zona = Reg.ID_Superior 
-		Group by Pais.Nombre,e2.Nombre,e2.Anio,p.Nombre 
-	) Votos
- 	Group by Votos.Pais_Eleccion, Votos.Anio,Votos.Nombre_Eleccion,Votos.Part
-	) VotosTotales , 
-	(
-	SELECT Pais.Nombre as Paises,(sum(e.Analfabeta + e.Alfabeta )) as TotalSuma from Estadistica e 
-		inner join Zona Muni ON Muni.ID_Zona = e.ID_Zona
-		inner join Eleccion e2 ON e2.ID_Eleccion = e.ID_Eleccion 
-		inner join Zona Dep ON Dep.ID_Zona = Muni.ID_Superior 
-		inner join Zona Reg ON Reg.ID_Zona = Dep.ID_Superior 
-		inner join Zona Pais on Pais.ID_Zona = Reg.ID_Superior 
-		inner join Partido p2 on p2.ID_Partido = e.ID_Partido 
-		group by Pais.Nombre
-	) VotosParciales
-where  VotosTotales.Pais_Eleccion = VotosParciales.Paises
 
 -- -------------- Consulta 2 -----Completa
 
@@ -171,7 +115,7 @@ ON Maximos.ERegion= Todos.ERegion AND Maximos.EPais=Todos.Epais AND Maximos.Mayo
 
 
 -- -------Consulta 6 ----------COMPLETA------
-Select Todos.Departamento,(Mujeres.Estudiantes/Todos.Estudiantes)* 100 as Porcentaje from( 
+Select Todos.Departamento,(Mujeres.Estudiantes/Todos.Estudiantes)* 100 as PorcentajeMujeres, (Todos.Estudiantes - Mujeres.Estudiantes)/Todos.Estudiantes * 100 as PorcentajeHombres from( 
 	Select Dep.Nombre as Departamento, Sum(e.Universitario) as Estudiantes from Estadistica e 
 		inner join Zona Muni ON Muni.ID_Zona = e.ID_Zona
 		inner join Zona Dep ON Dep.ID_Zona = Muni.ID_Superior 
@@ -190,7 +134,6 @@ Select Dep.Nombre as Departamento, Sum(e.Universitario) as Estudiantes from Esta
 		group by Dep.Nombre
 )Mujeres
 ON Mujeres.Estudiantes > (Todos.Estudiantes - Mujeres.Estudiantes) and Mujeres.Departamento=Todos.Departamento
-
 
 
 -- --------------Consulta 7 -----Completa 
